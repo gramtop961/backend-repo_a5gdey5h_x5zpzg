@@ -12,10 +12,9 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List, Literal
 
-# Example schemas (replace with your own):
-
+# Example schemas (keep for reference)
 class User(BaseModel):
     """
     Users collection schema
@@ -38,11 +37,29 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# ClipMaster schemas
+class Clip(BaseModel):
+    caption: Optional[str] = None
+    duration: Optional[float] = None
+    aspect_ratio: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    download_url: Optional[str] = None
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Job(BaseModel):
+    status: Literal['queued', 'processing', 'completed', 'failed'] = 'queued'
+    progress: int = 0
+    message: Optional[str] = None
+
+    # Source information
+    source_type: Literal['file', 'links']
+    original_filename: Optional[str] = None
+    sources: Optional[List[str]] = None
+
+    # Options
+    clip_length: Optional[str] = 'auto'
+    aspect_ratio: Optional[str] = 'auto'
+    auto_highlights: bool = True
+
+    # Results
+    clips: Optional[List[Clip]] = None
+    error: Optional[str] = None
